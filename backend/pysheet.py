@@ -25,7 +25,7 @@ print(time_of_day)
 workbook_date = "{}.{}.{}".format(current_day,current_month,current_year )
 
 try:
-    wks = sh.worksheet("2.12.22")
+    wks = sh.worksheet("7.12.22")
 except:
     print("Created workbook")
     worksheet = sh.add_worksheet(title = workbook_date, rows=30, cols=6)
@@ -71,59 +71,46 @@ def send_whatsapp_message(msg: str, phone: str):
 
 todos , _ =fetch_google_sheets()
 
-def send_reminder():
-
-    greeting=["Mambo", "Hi", "Vipi, uko poa?", "Za saizi"]
-
-    message = {"Morning": "{}, please update your daily plan, I,m about to share".format(random.choice(greeting)),
-               "Afternoon": "{}, please update your daily achievement, I,m about to share".format(random.choice(greeting))}
-
-    team=list(todos.keys())
-    message = message[time_of_day]
-    for i,j in enumerate(team):
-        items = todos[j]
-        if not items:   
-            phone = names[j]
-            print("sending reminder to {}".format(j))
-            send_whatsapp_message(message, phone)
-        else:
-            print("{} has shared".format(j))
-    morning = 13
-    reminder = ""
-
-    if current_hr > 14:
-        reminder = "morning_reminder"
-    else:
-        reminder = "evening_reminder"
-
-name_to_broadcast="Moses"
-
-def broadcast_sheets(name):
+def broadcast_sheet(name):
     todos, purpose = fetch_google_sheets()
-    test_list = list(test_name.values())
-    name_list = list(test_name.keys())
     message = list(todos[name])
     single_list = []
     listed_items=[single_list.append(x[0]) for x in message]
     str_list = '.\n'.join(single_list)
     final_message = "Hi \nThis is my daily {} : \n{}".format(purpose,  str_list)
-    print (final_message)
+    phone=test_name["Moses"]
+    time.sleep(5)
+    print("Preparing to broadcast sheets")
+    send_whatsapp_message(final_message, phone)
+    wks.update('E30', 'Shared to Supervisor')
+
     return
-    
-    final_message = "Hi Ivaney\nThis is my daily plan : \n{}".format(str_list)
-    for x,y in enumerate(message):
-        item = "{}.{}\n".format(x,y[0])
-        single_list.append(y[0])
 
-    
-    
-    for i in range(len(test_list)):
-        phone = test_list[i]
-        print("Sending message to: ", name_list[i])
-        time.sleep(5)
-        send_whatsapp_message(final_message, phone)
+def send_broadcast():
 
+    greeting=["Mambo", "Hi", "Vipi, uko poa?", "Za saizi"]
+
+    message = {"Morning": "{}, please update your daily plan, I,m about to share".format(random.choice(greeting)),
+               "Afternoon": "{}, please update your daily achievement, I,m about to share".format(random.choice(greeting))}
+    name_to_broadcast="Moses"
+    team=list(todos.keys())
+    message = message[time_of_day]
+    updater_cell = wks.acell('E30').value
+    for i,j in enumerate(team):
+        items = todos[j]
+        if not items:   
+            phone = names[j]
+            print("sending reminder to {}".format(j))
+            #send_whatsapp_message(message, phone)
+        elif j == name_to_broadcast:
+            if updater_cell:
+               print("already shared to stakeholders")
+            else:
+                broadcast_sheet(name_to_broadcast)
+
+        else:
+            print("{} has shared".format(j))
 
 
 if __name__  == "__main__" :
-    send_reminder()
+    send_broadcast()
