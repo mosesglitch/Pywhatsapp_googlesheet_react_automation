@@ -9,16 +9,19 @@ sa = gspread.service_account()
 sh = sa.open("Daily plan")
 wks=sh.worksheet("7.12.22")
 
-names_list = list(names.keys())
-
-for i in range(len(names_list)-1):
-    fst = wks.find(names_list[i] , in_column=0) #,case_sensitive=False)
-    snd = wks.find(names_list[i+1] ,  in_column=0)
-    print(i+1,".",names_list[i]  , wks.get("B{}:B{}".format(fst.row, snd.row-1)))
+def fetch_google_sheets():
+    names_list = list(names.keys())
+    to_do_items=[]
+    for i in range(len(names_list)-1):
+        fst = wks.find(names_list[i] , in_column=0) #,case_sensitive=False)
+        snd = wks.find(names_list[i+1] ,  in_column=0)
+        to_do_items.append({names_list[i]:wks.get("B{}:B{}".format(fst.row, snd.row-1))})
+    print(to_do_items)
+    return to_do_items
 
 message = {"morning_reminder":"Hallo, please update your daily plan, I,m about to share",
          "evening_reminder":"Hallo, please update your daily achievement, I,m about to share"}
-
+fetch_google_sheets()
 current_hr = datetime.datetime.now().hour
 morning=13
 reminder=""
