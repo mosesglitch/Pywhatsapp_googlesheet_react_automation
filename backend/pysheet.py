@@ -1,5 +1,5 @@
 import gspread
-from contacts import test_name, names
+from contacts import test_name, names, supervisor
 import datetime
 import time
 import pywhatkit
@@ -10,6 +10,7 @@ import random
 sa = gspread.service_account()
 sh = sa.open("Daily plan")
 keyboard = Controller()
+
 current_day = datetime.datetime.now().day
 current_month = datetime.datetime.now().month
 current_year = 23
@@ -21,17 +22,15 @@ if current_hr < 13:
 else:
     time_of_day+="Afternoon"
 
-print(time_of_day)
-workbook_date = "{}.{}.{}".format(current_day,current_month,current_year )
-
+yesterday_worksheet = "{}.{}.{}".format(current_day,current_month,current_year )
+todays_worksheet = "{}.{}.{}".format(current_day,current_month,current_year )
+tommorow_worksheet = "{}.{}.{}".format(current_day,current_month,current_year )
 try:
-    wks = sh.worksheet("7.12.22")
+    wks = sh.worksheet(todays_worksheet)
 except:
     print("Created workbook")
-    worksheet = sh.add_worksheet(title = workbook_date, rows=30, cols=6)
+    worksheet = sh.add_worksheet(title = todays_worksheet, rows=30, cols=6)
      
-print("workbook exists")
-
 def fetch_google_sheets():
     names_list = list(names.keys())
     if time_of_day == "Morning":
@@ -65,7 +64,7 @@ def send_whatsapp_message(msg: str, phone: str):
         keyboard.press(Key.enter)
         keyboard.release(Key.enter)
         time.sleep(5)
-        print("Message sent!")
+        print("Message sent!\t")
     except Exception as e:
         print(str(e))
 
@@ -78,7 +77,7 @@ def broadcast_sheet(name):
     listed_items=[single_list.append(x[0]) for x in message]
     str_list = '.\n'.join(single_list)
     final_message = "Hi \nThis is my daily {} : \n{}".format(purpose,  str_list)
-    phone=test_name["Moses"]
+    phone = supervisor["Ivaney"]
     time.sleep(5)
     print("Preparing to broadcast sheets")
     send_whatsapp_message(final_message, phone)
@@ -90,8 +89,8 @@ def send_broadcast():
 
     greeting=["Mambo", "Hi", "Vipi, uko poa?", "Za saizi"]
 
-    message = {"Morning": "{}, please update your daily plan, I,m about to share".format(random.choice(greeting)),
-               "Afternoon": "{}, please update your daily achievement, I,m about to share".format(random.choice(greeting))}
+    message = {"Morning": "{}, please update your daily plan \n https://docs.google.com/spreadsheets/d/13AL9ioDJYnElAH7ihxEjQSYyx6KC155VDJlnmJBh6-0/edit?pli=1#gid=0".format(random.choice(greeting)),
+               "Afternoon": "{}, please update your daily achievement, I,m about to share \n https://docs.google.com/spreadsheets/d/13AL9ioDJYnElAH7ihxEjQSYyx6KC155VDJlnmJBh6-0/edit?pli=1#gid=0".format(random.choice(greeting))}
     name_to_broadcast="Moses"
     team=list(todos.keys())
     message = message[time_of_day]
@@ -100,23 +99,19 @@ def send_broadcast():
         items = todos[j]
         if not items:   
             phone = names[j]
-            print("sending reminder to {}".format(j))
-            #send_whatsapp_message(message, phone)
+            print("Sending reminder to {}".format(j))
+            send_whatsapp_message(message, phone)
         elif j == name_to_broadcast:
             if updater_cell:
-               print("already shared to stakeholders")
+                print("{}Already shared to Ivaney".format(j))
             else:
+                worksheet = sh.add_worksheet(title=tommorow_worksheet, rows=100, cols=20)
                 broadcast_sheet(name_to_broadcast)
+                sh.del_worksheet(yesterday_worksheet)
 
         else:
             print("{} has shared".format(j))
 
-names = {"Susan":"+255656389585",
-         "Moses" : "+255655509377",
-         "Richard":"+255623984029",  
-         "Happiness":"+255621346336",
-         "Present":"0"}
-test_name = {"susan":"+255656389585",
-             "conso":"+254712700283"}
+
 if __name__  == "__main__" :
     send_broadcast()
