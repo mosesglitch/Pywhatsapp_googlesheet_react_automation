@@ -9,8 +9,21 @@ import {
 } from "mdb-react-ui-kit";
 
 const InputItem = ({ showItems }) => {
-  const handleSubmit = (e) => {
+  const addInput = (e) => {
     e.preventDefault();
+    const tag = document.createElement("INPUT");
+    tag.setAttribute("type", "text");
+    tag.className = "form-control pt-3 mt-3";
+    tag.style.borderBottomColor = "BlueViolet";
+    tag.style.MarginTop = "30px";
+
+    var element = document.getElementById("itemForm");
+    tag.addEventListener("input", (e) => {
+      handleSubmit(e);
+    });
+    element.appendChild(tag);
+  };
+  const handleSubmit = (e) => {
     console.log("mama");
   };
   const itemInput = showItems.map((item, i) => {
@@ -22,6 +35,7 @@ const InputItem = ({ showItems }) => {
           textAfter={<MDBCheckbox style={{ backgroundColor: "black" }} />}
         > */}
         <input
+          key={i}
           className="form-control pt-3"
           type="text"
           value={item}
@@ -36,16 +50,27 @@ const InputItem = ({ showItems }) => {
   return (
     <>
       <form>
-        {itemInput} <br />
+        <div id="itemForm">{itemInput}</div> <br />
         <div>
-          <Icon disabled name="add" size="large" color="black" />
-          <input
-            type="submit"
-            style={{
-              float: "right",
-              marginRight: "10px",
+          <div
+            onClick={(e) => {
+              addInput(e);
             }}
-          />
+          >
+            <Icon disabled name="add" size="large" color="black" />
+          </div>
+          <div>
+            <input
+              type="submit"
+              style={{
+                float: "right",
+                marginRight: "10px",
+              }}
+              onClick={(e) => {
+                handleSubmit(e);
+              }}
+            />
+          </div>
         </div>
       </form>
     </>
