@@ -8,7 +8,6 @@ import {
   MDBRow,
   MDBCol,
 } from "mdb-react-ui-kit";
-import { Segment } from "semantic-ui-react";
 import TabContent from "./TabContent";
 
 const names = {
@@ -32,12 +31,13 @@ const names = {
   ],
 };
 
-export default function Tabs() {
+export default function Tabs({ edit, removeEdit }) {
   const [verticalActive, setVerticalActive] = useState("SUSAN");
   const [itemToShow, setItemToShow] = useState("SUSAN");
   const [showItems, setShowItems] = useState([]);
-
+  const [rmEdit, unsetEdit] = useState(edit);
   const handleVerticalClick = (value) => {
+    removeEdit(false);
     if (value === verticalActive) {
       return;
     }
@@ -48,6 +48,7 @@ export default function Tabs() {
       if (key === verticalActive) {
         setShowItems(value);
         setItemToShow(key);
+        unsetEdit(true);
       }
     }
   }, [verticalActive]);
@@ -75,8 +76,7 @@ export default function Tabs() {
         <MDBCol size="9">
           <MDBTabsContent>
             <MDBTabsPane show={verticalActive === itemToShow} className="pt-3">
-              {/* {itemsList} */}
-              <TabContent showItems={showItems} />
+              <TabContent showItems={showItems} edit={edit} />
             </MDBTabsPane>
           </MDBTabsContent>
         </MDBCol>

@@ -1,7 +1,10 @@
-import React from "react";
-import { Segment } from "semantic-ui-react";
+import React, { useState } from "react";
+import { Segment, Icon } from "semantic-ui-react";
+import { MDBInputGroup, MDBCheckbox, MDBRadio } from "mdb-react-ui-kit";
+import InputItem from "./InputItem";
 
-const TabContent = ({ showItems }) => {
+const TabContent = ({ showItems, edit }) => {
+  const [input, setInput] = useState();
   const itemsList = showItems.map((item, i) => {
     return (
       <Segment key={i} color="violet" textAlign="center">
@@ -12,6 +15,11 @@ const TabContent = ({ showItems }) => {
       </Segment>
     );
   });
-  return itemsList;
+
+  if (!edit) {
+    return <>{itemsList}</>;
+  } else {
+    return <InputItem showItems={showItems} />;
+  }
 };
 export default TabContent;
