@@ -8,7 +8,12 @@ const TabContent = ({ showItems, edit }) => {
   const itemsList = showItems.map((item, i) => {
     return (
       <Segment key={i} color="violet" textAlign="center">
-        <p style={{ height: "20px", padding: "50px,15px,0px,10px" }}>
+        <p
+          style={{
+            height: "20px",
+            padding: "50px,15px,0px,10px",
+          }}
+        >
           {" "}
           {item[0]}
         </p>
@@ -17,7 +22,14 @@ const TabContent = ({ showItems, edit }) => {
   });
 
   if (!edit) {
-    return <>{itemsList}</>;
+    return (
+      <>
+        {itemsList}
+        <div class="fa-3x">
+          <i class="fa-solid fa-circle-plus fa-beat"></i>
+        </div>
+      </>
+    );
   } else {
     return <InputItem showItems={showItems} />;
   }

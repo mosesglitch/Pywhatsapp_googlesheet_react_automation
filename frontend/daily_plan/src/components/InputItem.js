@@ -7,7 +7,7 @@ import {
   MDBBtn,
   MDBInput,
 } from "mdb-react-ui-kit";
-
+import "../App.css";
 const InputItem = ({ showItems }) => {
   const addInput = (e) => {
     e.preventDefault();
@@ -57,7 +57,13 @@ const InputItem = ({ showItems }) => {
               addInput(e);
             }}
           >
-            <Icon disabled name="add" size="large" color="black" />
+            <Icon
+              disabled
+              name="add"
+              size="large"
+              color="black"
+              className="hearts"
+            />
           </div>
           <div>
             <input
