@@ -5,11 +5,12 @@ import "../App.css";
 const InputItem = ({ showItems }) => {
   const [items, setItems] = useState([]);
   const [input, setInput] = useState("");
-  const firstObj = useRef();
+  const firstObj = useRef(null);
 
   useEffect(() => {
     const singleItems = showItems.map((list, i) => {
       return { id: i, task: list[0] };
+      firstObj.current.focus();
     });
     setItems(singleItems);
   }, []);
@@ -18,13 +19,14 @@ const InputItem = ({ showItems }) => {
     e.preventDefault();
     console.log("sub", items);
   };
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const id = parseInt(e.target.dataset.id, 10);
     let copy = [...items];
     const val = e.target.value;
     copy[id].task = val;
     setItems(copy);
-  };
+  });
+
   const addItem = (e) => {
     setInput(e.target.value);
     let copy = [...items];
@@ -41,9 +43,9 @@ const InputItem = ({ showItems }) => {
     console.log(items);
   }, [items]);
 
-  // const focus = () => {
-  //   nameRef.current.focus();
-  // };
+  const focus = () => {
+    firstObj.current.focus();
+  };
 
   const itemInput = items.map((item, i) => {
     return (
@@ -58,6 +60,7 @@ const InputItem = ({ showItems }) => {
             onChange={(e) => {
               handleChange(e);
             }}
+            autoFocus
             ref={i === 0 ? firstObj : null}
           />{" "}
         </Grid.Column>
@@ -80,33 +83,37 @@ const InputItem = ({ showItems }) => {
       <>
         <form>
           <div id="itemForm">{itemInput}</div> <br />
-          <div>
-            <div
-              onClick={(e) => {
-                addItem(e);
-              }}
-            >
-              <Icon
-                disabled
-                name="add"
-                size="large"
-                color="black"
-                className="hearts"
-              />
-            </div>
-            <div>
-              <input
-                type="submit"
-                style={{
-                  float: "right",
-                  marginRight: "10px",
-                }}
+          <Grid>
+            <Grid.Column floated="left" width={15}>
+              <div
                 onClick={(e) => {
-                  handleSubmit(e);
+                  addItem(e);
                 }}
-              />
-            </div>
-          </div>
+              >
+                <Icon
+                  disabled
+                  name="add"
+                  size="large"
+                  color="black"
+                  className="hearts"
+                />
+              </div>
+            </Grid.Column>
+            <Grid.Column>
+              <div>
+                <input
+                  type="submit"
+                  style={{
+                    float: "right",
+                    marginRight: "20px",
+                  }}
+                  onClick={(e) => {
+                    handleSubmit(e);
+                  }}
+                />
+              </div>
+            </Grid.Column>
+          </Grid>
         </form>
       </>
     );

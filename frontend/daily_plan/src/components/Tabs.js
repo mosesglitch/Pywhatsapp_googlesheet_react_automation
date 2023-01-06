@@ -58,6 +58,11 @@ export default function Tabs({ edit, removeEdit }) {
     return (
       <MDBTabsItem key={i}>
         <MDBTabsLink
+          style={{
+            backgroundColor: "aliceblue",
+            fontSize: "13px",
+            fontFamily: "cursive",
+          }}
           onClick={() => handleVerticalClick(name)}
           active={verticalActive === name}
         >
@@ -69,13 +74,22 @@ export default function Tabs({ edit, removeEdit }) {
 
   return (
     <>
-      <MDBRow>
+      <MDBRow style={{ backgroundColor: "white" }}>
         <MDBCol size="3">
-          <MDBTabs className="flex-column text-center">{nameTab}</MDBTabs>
+          <MDBTabs
+            style={{ backgroundColor: "blue" }}
+            className="flex-column text-center"
+          >
+            {nameTab}
+          </MDBTabs>
         </MDBCol>
         <MDBCol size="9">
           <MDBTabsContent>
-            <MDBTabsPane show={verticalActive === itemToShow} className="pt-3">
+            <MDBTabsPane
+              // style={{ backgroundColor: "purple" }}
+              show={verticalActive === itemToShow}
+              className="pt-3"
+            >
               <TabContent showItems={showItems} edit={edit} />
             </MDBTabsPane>
           </MDBTabsContent>
