@@ -23,7 +23,56 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 
+@keyframes trash {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.25);
+  }
+}
+.trash {
+  color: dimgrey;
+  padding: 2px;
+  opacity: 0.5;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+}
+.trash:hover {
+  animation: trash 5s 1;
+  fill: red;
+  color: red;
+  opacity: 1;
+  transition: opacity 500ms;
+}
+.hearts {
+  color: white;
+  padding: 2px;
+  opacity: 0.3;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+}
+.hearts {
+  animation: heartbeat 3s infinite;
+  fill: white;
+  color: white;
+  opacity: 1;
+  transition: opacity 500ms;
+}
 .App-link {
   color: #61dafb;
 }

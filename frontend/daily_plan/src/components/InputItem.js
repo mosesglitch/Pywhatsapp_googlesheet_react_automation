@@ -1,85 +1,115 @@
-import React from "react";
-import { Segment, Icon } from "semantic-ui-react";
-import {
-  MDBContainer,
-  MDBNavbar,
-  MDBNavbarBrand,
-  MDBBtn,
-  MDBInput,
-} from "mdb-react-ui-kit";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Grid, Icon } from "semantic-ui-react";
 import "../App.css";
-const InputItem = ({ showItems }) => {
-  const addInput = (e) => {
-    e.preventDefault();
-    const tag = document.createElement("INPUT");
-    tag.setAttribute("type", "text");
-    tag.className = "form-control pt-3 mt-3";
-    tag.style.borderBottomColor = "BlueViolet";
-    tag.style.MarginTop = "30px";
 
-    var element = document.getElementById("itemForm");
-    tag.addEventListener("input", (e) => {
-      handleSubmit(e);
+const InputItem = ({ showItems }) => {
+  const [items, setItems] = useState([]);
+  const [input, setInput] = useState("");
+  const firstObj = useRef();
+
+  useEffect(() => {
+    const singleItems = showItems.map((list, i) => {
+      return { id: i, task: list[0] };
     });
-    element.appendChild(tag);
-  };
+    setItems(singleItems);
+  }, []);
+
   const handleSubmit = (e) => {
-    console.log("mama");
+    e.preventDefault();
+    console.log("sub", items);
   };
-  const itemInput = showItems.map((item, i) => {
+  const handleChange = (e) => {
+    const id = parseInt(e.target.dataset.id, 10);
+    let copy = [...items];
+    const val = e.target.value;
+    copy[id].task = val;
+    setItems(copy);
+  };
+  const addItem = (e) => {
+    setInput(e.target.value);
+    let copy = [...items];
+    copy = [...copy, { id: items.length + 1, task: input }];
+    setItems(copy);
+  };
+  const deleteItem = (e) => {
+    const index = parseInt(e.target.dataset.id, 10);
+    let copy = [...items];
+    copy.splice(index, 1);
+    setItems(copy);
+  };
+  useEffect(() => {
+    console.log(items);
+  }, [items]);
+
+  // const focus = () => {
+  //   nameRef.current.focus();
+  // };
+
+  const itemInput = items.map((item, i) => {
     return (
-      <div className="pt-3">
-        {/* <MDBInputGroup
-          className="mb-3"
-          textTag="div"
-          textAfter={<MDBCheckbox style={{ backgroundColor: "black" }} />}
-        > */}
-        <input
-          key={i}
-          className="form-control pt-3"
-          type="text"
-          value={item}
-          style={{ borderBottomColor: "BlueViolet" }}
-          onChange={() => {}}
-        />
-        {/* <MDBCheckbox style={{ backgroundColor: "black" }} /> */}
-        {/* </MDBInputGroup> */}
-      </div>
+      <Grid data-id={i} key={item.id}>
+        <Grid.Column floated="left" width={15}>
+          <input
+            className="form-control pt-3"
+            data-id={i}
+            type="text"
+            value={item.task}
+            style={{ borderBottomColor: "BlueViolet" }}
+            onChange={(e) => {
+              handleChange(e);
+            }}
+            ref={i === 0 ? firstObj : null}
+          />{" "}
+        </Grid.Column>
+        <Grid.Column>
+          <Icon
+            data-id={i}
+            onClick={(e) => {
+              deleteItem(e);
+            }}
+            className="trash "
+            // disabled
+            name="trash"
+          />
+        </Grid.Column>
+      </Grid>
     );
   });
-  return (
-    <>
-      <form>
-        <div id="itemForm">{itemInput}</div> <br />
-        <div>
-          <div
-            onClick={(e) => {
-              addInput(e);
-            }}
-          >
-            <Icon
-              disabled
-              name="add"
-              size="large"
-              color="black"
-              className="hearts"
-            />
-          </div>
+  if (items.length > 0) {
+    return (
+      <>
+        <form>
+          <div id="itemForm">{itemInput}</div> <br />
           <div>
-            <input
-              type="submit"
-              style={{
-                float: "right",
-                marginRight: "10px",
-              }}
+            <div
               onClick={(e) => {
-                handleSubmit(e);
+                addItem(e);
               }}
-            />
+            >
+              <Icon
+                disabled
+                name="add"
+                size="large"
+                color="black"
+                className="hearts"
+              />
+            </div>
+            <div>
+              <input
+                type="submit"
+                style={{
+                  float: "right",
+                  marginRight: "10px",
+                }}
+                onClick={(e) => {
+                  handleSubmit(e);
+                }}
+              />
+            </div>
           </div>
-        </div>
-      </form>
-    </>
-  );
+        </form>
+      </>
+    );
+  }
 };
 export default InputItem;
