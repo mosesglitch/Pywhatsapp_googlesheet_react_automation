@@ -6,6 +6,7 @@ import pywhatkit
 import pyautogui
 from pynput.keyboard import Key, Controller
 import random
+from flask import Flask, request, jsonify, abort, redirect, flash, session
 
 sa = gspread.service_account()
 sh = sa.open("Daily plan")
@@ -17,7 +18,7 @@ current_year = 23
 current_hr = datetime.datetime.now().hour
 time_of_day=""
 
-if current_hr < 13:
+if current_hr > 13:
     time_of_day+="Morning"
 else:
     time_of_day+="Afternoon"
@@ -111,7 +112,49 @@ def send_broadcast():
 
         else:
             print("{} has shared".format(j))
+# app = Flask(__name__)
+# print(todos)
+# @app.route("/plan",methods=["POST"])
+def get_todos():
+    body = request.get_json()
+    newtodos = body.get("todos", None)
+    name = body.get("name", None)
+    fst = wks.find(name , in_column=0 ,case_sensitive=False)
+    # to_do_items[names_list[i]]=wks.get("B{}:B{}".format(fst.row, snd.row-1))
+    # 
+    body = {
+    'requests':[ {
+        # 'insertDimension': {
+        #     "range": {
+        #     "sheetId": "2132580049",
+        #     "dimension": "ROWS",
+        #     "startIndex": fst.row+3,
+        #     "endIndex": fst.row+len(newtodos)-1
+        #     },
+        #     "inheritFromBefore": False
+        # },
+        "mergeCells": {
+            "mergeType": "MERGE_ALL",
+            "range": {  # In this sample script, all cells of "A1:C3" of "Sheet1" are merged.
+                "sheetId": "2132580049",
+                "startRowIndex": fst.row+3,
+                "endRowIndex": fst.row+len(newtodos)-1,
+                "startColumnIndex": 0,
+                "endColumnIndex": 0
+                }
+            }
+        }]
+    }
+    
+    if len(newtodos)>4:
+        print("length",len(newtodos))
+        sh.batch_update(body)
+    for i,j in enumerate(newtodos):
+        wks.update("B{}".format(fst.row+i), newtodos[i]["task"] )       
+    print("incoming",newtodos, fst)
+    return jsonify({"success": True,
+                    "wkstodos":todos})
+if __name__ == '__main__':
+    print('running')
 
-
-if __name__  == "__main__" :
-    send_broadcast()
+    # app.run(debug=True)
